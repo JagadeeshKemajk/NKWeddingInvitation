@@ -59,43 +59,56 @@ if (document.readyState === 'loading') {
     });
 }
 
-// Unmute and play background music on first user interaction (required for browser autoplay policy)
-function unmuteAudio() {
-    const bgMusic = document.getElementById('bgMusic');
-    if (bgMusic) {
-        bgMusic.muted = false;
-        bgMusic.volume = 0.3; // Set volume to 30% for subtle background
-        let playPromise = bgMusic.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log('Audio playback prevented:', error);
+// Audio playback management
+const bgMusic = document.getElementById('bgMusic');
+const playMusicBtn = document.getElementById('playMusicBtn');
+
+function startAudioPlayback() {
+    if (!bgMusic) return;
+    
+    bgMusic.muted = false;
+    bgMusic.volume = 0.3;
+    
+    let playPromise = bgMusic.play();
+    
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                console.log('Audio playing successfully');
+                if (playMusicBtn) playMusicBtn.style.display = 'none';
+            })
+            .catch(error => {
+                console.log('Autoplay prevented:', error.message);
+                // Show play button if autoplay fails
+                if (playMusicBtn) playMusicBtn.style.display = 'block';
             });
-        }
     }
-    // Remove listeners after first interaction
-    document.removeEventListener('click', unmuteAudio);
-    document.removeEventListener('scroll', unmuteAudio);
-    document.removeEventListener('touchstart', unmuteAudio);
 }
 
-document.addEventListener('click', unmuteAudio);
-document.addEventListener('scroll', unmuteAudio);
-document.addEventListener('touchstart', unmuteAudio);
-
-// Also try to play audio on page load if possible
+// Try to play on load
 window.addEventListener('load', function() {
-    const bgMusic = document.getElementById('bgMusic');
-    if (bgMusic) {
-        bgMusic.volume = 0.3;
-        let playPromise = bgMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log('Autoplay prevented. Will play on user interaction.', error);
-            });
-        }
-    }
+    setTimeout(startAudioPlayback, 500);
 });
+
+// Play on user interaction
+function enableAudioOnInteraction() {
+    startAudioPlayback();
+    // Remove listeners after successful play attempt
+    document.removeEventListener('click', enableAudioOnInteraction);
+    document.removeEventListener('scroll', enableAudioOnInteraction);
+    document.removeEventListener('touchstart', enableAudioOnInteraction);
+}
+
+document.addEventListener('click', enableAudioOnInteraction);
+document.addEventListener('scroll', enableAudioOnInteraction);
+document.addEventListener('touchstart', enableAudioOnInteraction);
+
+// Manual play button
+if (playMusicBtn) {
+    playMusicBtn.addEventListener('click', function() {
+        startAudioPlayback();
+    });
+}
 
 // Scroll-based heading transformation
 window.addEventListener('scroll', function() {
