@@ -59,13 +59,21 @@ if (document.readyState === 'loading') {
     });
 }
 
-// Unmute background music on first user interaction (required for browser autoplay policy)
-const bgMusic = document.getElementById('bgMusic');
+// Unmute and play background music on first user interaction (required for browser autoplay policy)
 function unmuteAudio() {
+    const bgMusic = document.getElementById('bgMusic');
     if (bgMusic) {
         bgMusic.muted = false;
+        bgMusic.volume = 0.3; // Set volume to 30% for subtle background
+        let playPromise = bgMusic.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('Audio playback prevented:', error);
+            });
+        }
     }
-    // Remove listener after first interaction
+    // Remove listeners after first interaction
     document.removeEventListener('click', unmuteAudio);
     document.removeEventListener('scroll', unmuteAudio);
     document.removeEventListener('touchstart', unmuteAudio);
@@ -74,6 +82,20 @@ function unmuteAudio() {
 document.addEventListener('click', unmuteAudio);
 document.addEventListener('scroll', unmuteAudio);
 document.addEventListener('touchstart', unmuteAudio);
+
+// Also try to play audio on page load if possible
+window.addEventListener('load', function() {
+    const bgMusic = document.getElementById('bgMusic');
+    if (bgMusic) {
+        bgMusic.volume = 0.3;
+        let playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('Autoplay prevented. Will play on user interaction.', error);
+            });
+        }
+    }
+});
 
 // Scroll-based heading transformation
 window.addEventListener('scroll', function() {
