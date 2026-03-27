@@ -59,6 +59,22 @@ if (document.readyState === 'loading') {
     });
 }
 
+// Unmute background music on first user interaction (required for browser autoplay policy)
+const bgMusic = document.getElementById('bgMusic');
+function unmuteAudio() {
+    if (bgMusic) {
+        bgMusic.muted = false;
+    }
+    // Remove listener after first interaction
+    document.removeEventListener('click', unmuteAudio);
+    document.removeEventListener('scroll', unmuteAudio);
+    document.removeEventListener('touchstart', unmuteAudio);
+}
+
+document.addEventListener('click', unmuteAudio);
+document.addEventListener('scroll', unmuteAudio);
+document.addEventListener('touchstart', unmuteAudio);
+
 // Scroll-based heading transformation
 window.addEventListener('scroll', function() {
     const heroSection = document.querySelector('header.hero');
