@@ -74,24 +74,30 @@ function startAudioPlayback() {
     if (playPromise !== undefined) {
         playPromise
             .then(() => {
-                console.log('Audio playing successfully');
+                console.log('✓ Audio playing successfully');
+                // Hide button only if autoplay succeeds
                 if (playMusicBtn) playMusicBtn.style.display = 'none';
             })
             .catch(error => {
-                console.log('Autoplay prevented:', error.message);
-                // Show play button if autoplay fails
-                if (playMusicBtn) playMusicBtn.style.display = 'block';
+                console.log('✗ Autoplay blocked:', error.message);
+                // Button stays visible as fallback
+                if (playMusicBtn) {
+                    playMusicBtn.style.display = 'block';
+                    playMusicBtn.style.opacity = '1';
+                }
             });
     }
 }
 
 // Try to play on load
 window.addEventListener('load', function() {
+    console.log('Page loaded - attempting audio autoplay');
     setTimeout(startAudioPlayback, 500);
 });
 
 // Play on user interaction
 function enableAudioOnInteraction() {
+    console.log('User interaction detected - attempting audio playback');
     startAudioPlayback();
     // Remove listeners after successful play attempt
     document.removeEventListener('click', enableAudioOnInteraction);

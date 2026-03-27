@@ -16,17 +16,19 @@ body {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    z-index: 50;
+    z-index: 9999;
     padding: 12px 20px;
     background: linear-gradient(135deg, #8a252c, #6b1d22);
     color: white;
-    border: none;
+    border: 2px solid #d9a05b;
     border-radius: 50px;
     font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(217, 160, 91, 0.5);
     transition: all 0.3s ease;
     font-weight: bold;
+    opacity: 1;
+    visibility: visible;
 }
 
 .play-music-btn:hover {
